@@ -35,7 +35,8 @@ def minimize(js):
         if compiled_data.get('errors', None):
             errors = []
             for error in compiled_data['errors']:
-                errors.append('Line %s: %s' % (error['lineno'], error['error']))
+                errors.append('Line %s: %s'
+                    % (error['lineno'], error['error']))
 
             error_message = "Syntax error:\n"
             error_message += "\n".join(errors)
@@ -52,16 +53,25 @@ def minimize(js):
         return compiled_data['compiledCode']
 
 
-if __name__ == '__main__':
-    argv = sys.argv[1:]
-    if len(argv) < 1:
-        print >>sys.stderr, 'error: Specify javascript file.'
-        sys.exit(-1)
+def process_args():
+    usage = 'Usage: minimizejs.py [filename]'
+    parser = OptionParser(usage=usage)
+    option, args = parser.parse_args()
 
+    if len(args) < 1:
+        return sys.stdin
+    else:
+        return args[0]
+
+
+def main():
+    js = process_args()
     try:
-        js = argv[0]
-        minimized_data = minimize(js)
-        print minimized_data
+        data = minimize(js)
+        print data
     except Exception, e:
         print >>sys.stderr, unicode(e)
-        sys.exit(-1)
+
+
+if __name__ == '__main__':
+    main()
